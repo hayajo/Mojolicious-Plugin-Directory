@@ -129,8 +129,8 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 =head1 SYNOPSIS
 
-  use Mojolicious::Plugin::Directory;
-  app->plugin( 'Directory', root => "/path/to/htdocs" )->start;
+  use Mojolicious::Lite;
+  plugin( 'Directory', root => "/path/to/htdocs" )->start;
 
   or
 
