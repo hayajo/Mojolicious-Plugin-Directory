@@ -158,6 +158,8 @@ hayajo
 
 =head1 SEE ALSO
 
+L<Plack::App::Directory>
+
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify
