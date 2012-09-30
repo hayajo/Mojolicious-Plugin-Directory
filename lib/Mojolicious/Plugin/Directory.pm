@@ -9,7 +9,6 @@ use DirHandle;
 use Mojo::Base qw{ Mojolicious::Plugin };
 
 # Stolen from Plack::App::Direcotry
-my $dir_file = "";
 my $dir_page = <<'PAGE';
 <html><head>
   <title>Index of <%= $cur_url %></title>
