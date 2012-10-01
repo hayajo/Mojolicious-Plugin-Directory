@@ -170,7 +170,7 @@ Mojolicious::Plugin::Directory is a static file server directory index a la Apac
 
 =head1 AUTHOR
 
-hayajo
+hayajo <hayajo@cpan.org>
 
 =head1 SEE ALSO
 
