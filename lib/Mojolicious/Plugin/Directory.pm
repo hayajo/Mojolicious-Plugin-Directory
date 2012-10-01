@@ -1,7 +1,7 @@
 package Mojolicious::Plugin::Directory;
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Cwd ();
 use Encode ();
@@ -44,14 +44,21 @@ sub register {
     my $self = shift;
     my ( $app, $args ) = @_;
 
-    my $root = Mojo::Home->new( $args->{root} || Cwd::getcwd );
+    my $root    = Mojo::Home->new( $args->{root} || Cwd::getcwd );
+    my $handler = $args->{handler};
+    $dir_page   = $args->{dir_page} if ( $args->{dir_page} );
+
     $app->hook(
         before_dispatch => sub {
             my $c = shift;
             return render_file( $c, $root )
                 if ( -f $root->to_string() );
             given ( my $path = $root->rel_dir( Mojo::Util::url_unescape($c->req->url) ) ) {
-                when (-f) { render_file( $c, $path ) }
+                when (-f) {
+                    $handler->( $c, $path )
+                        if ( $handler && ref $handler eq 'CODE' );
+                    render_file( $c, $path ) unless ( $c->tx->res->code );
+                }
                 when (-d) { render_indexes( $c, $path ) }
                 default   {}
             }
@@ -148,6 +155,16 @@ Mojolicious::Plugin::Directory is a static file server directory index a la Apac
  Document root directory. Defaults to the current directory.
 
  if root is a file, serve only root file.
+
+=item dir_page
+
+ a HTML template of index page
+
+=item handler
+
+ CODE BLOCK for handle a request file.
+
+ if not rendered in CODE BLOCK, serve as static file.
 
 =back
 
