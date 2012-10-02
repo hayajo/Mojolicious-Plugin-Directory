@@ -135,12 +135,26 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 =head1 SYNOPSIS
 
+  # simple usage
   use Mojolicious::Lite;
   plugin( 'Directory', root => "/path/to/htdocs" )->start;
 
+  # with handler
+  use Text::Markdown qw{ markdown };
+  use Path::Class;
+  use Encode qw{ decode_utf8 };
+  plugin('Directory', root => "/path/to/htdocs", handler => sub {
+      my ($c, $path) = @_;
+      if ($path =~ /\.(md|mkdn)$/) {
+          my $text = file($path)->slurp;
+          my $html = markdown( decode_utf8($text) );
+          $c->render( inline => $html );
+      }
+  })->start;
+
   or
 
-  $ perl -Mojo -E 'a->plugin("Directory", root => "/path/to/htdocs")->start' daemon
+  > perl -Mojo -E 'a->plugin("Directory", root => "/path/to/htdocs")->start' daemon
 
 =head1 DESCRIPTION
 
