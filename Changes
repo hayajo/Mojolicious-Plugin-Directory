@@ -1,5 +1,8 @@
 Revision history for Perl extension Mojolicious::Plugin::Directory
 
+0.03
+        - fixed to pass the test on Windows
+
 0.02
         - added dir_page configuration
         - added handler configuration
