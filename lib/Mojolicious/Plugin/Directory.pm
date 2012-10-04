@@ -166,19 +166,19 @@ Mojolicious::Plugin::Directory is a static file server directory index a la Apac
 
 =item root
 
- Document root directory. Defaults to the current directory.
+Document root directory. Defaults to the current directory.
 
- if root is a file, serve only root file.
+if root is a file, serve only root file.
 
 =item dir_page
 
- a HTML template of index page
+a HTML template of index page
 
 =item handler
 
- CODE BLOCK for handle a request file.
+CODE BLOCK for handle a request file.
 
- if not rendered in CODE BLOCK, serve as static file.
+if not rendered in CODE BLOCK, serve as static file.
 
 =back
 
