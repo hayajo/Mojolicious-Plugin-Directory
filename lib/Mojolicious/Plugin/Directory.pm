@@ -160,27 +160,50 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 Mojolicious::Plugin::Directory is a static file server directory index a la Apache's mod_autoindex.
 
-=head1 CONFIGURATION
+=head1 METHODS
 
-=over 4
+L<Mojolicious::Plugin::Process> inherits all methods from L<Mojolicios::Plugin>.
 
-=item root
+=head1 OPTIONS
+
+Mojolicious::Plugin::Directory supports the following options.
+
+=head2 C<root>
+
+  # Mojolicious::Lite
+  plugin Directory => { root => "/path/to/htdocs" };
 
 Document root directory. Defaults to the current directory.
 
 if root is a file, serve only root file.
 
-=item dir_page
+=head2 2<dir_page>
+
+  # Mojolicious::Lite
+  plugin Directory => { dir_page => $template_str };
 
 a HTML template of index page
 
-=item handler
+=head2 C<handler>
 
-CODE BLOCK for handle a request file.
+  # Mojolicious::Lite
+  use Text::Markdown qw{ markdown };
+  use Path::Class;
+  use Encode qw{ decode_utf8 };
+  plugin Directory => {
+      handler => sub {
+          my ($c, $path) = @_;
+          if ($path =~ /\.(md|mkdn)$/) {
+              my $text = file($path)->slurp;
+              my $html = markdown( decode_utf8($text) );
+              $c->render( inline => $html );
+          }
+      }
+  };
 
-if not rendered in CODE BLOCK, serve as static file.
+CODEREF for handle a request file.
 
-=back
+if not rendered in CODEREF, serve as static file.
 
 =head1 AUTHOR
 
