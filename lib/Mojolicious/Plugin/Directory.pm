@@ -158,7 +158,7 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 =head1 DESCRIPTION
 
-Mojolicious::Plugin::Directory is a static file server directory index a la Apache's mod_autoindex.
+L<Mojolicious::Plugin::Directory> is a static file server directory index a la Apache's mod_autoindex.
 
 =head1 METHODS
 
@@ -177,7 +177,7 @@ Document root directory. Defaults to the current directory.
 
 if root is a file, serve only root file.
 
-=head2 2<dir_page>
+=head2 C<dir_page>
 
   # Mojolicious::Lite
   plugin Directory => { dir_page => $template_str };
@@ -207,7 +207,7 @@ if not rendered in CODEREF, serve as static file.
 
 =head1 AUTHOR
 
-hayajo <hayajo@cpan.org>
+hayajo E<lt>hayajo@cpan.orgE<gt>
 
 =head1 SEE ALSO
 
