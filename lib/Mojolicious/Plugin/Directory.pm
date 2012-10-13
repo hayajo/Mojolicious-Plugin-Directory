@@ -51,15 +51,11 @@ sub register {
     $app->hook(
         before_dispatch => sub {
             my $c = shift;
-            return render_file( $c, $root )
-                if ( -f $root->to_string() );
+            return render_file( $c, $root ) if ( -f $root->to_string() );
             given ( my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) ) ) {
-                when (-f) {
-                    $handler->( $c, $path )
-                        if ( $handler && ref $handler eq 'CODE' );
-                    render_file( $c, $path ) unless ( $c->tx->res->code );
-                }
-                when (-d) { render_indexes( $c, $path ) }
+                $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
+                when (-f) { render_file( $c, $path ) unless ( $c->tx->res->code ) }
+                when (-d) { render_indexes( $c, $path ) unless ( $c->tx->res->code ) }
                 default   {}
             }
         },
@@ -145,7 +141,7 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
   use Encode qw{ decode_utf8 };
   plugin('Directory', root => "/path/to/htdocs", handler => sub {
       my ($c, $path) = @_;
-      if ($path =~ /\.(md|mkdn)$/) {
+      if ( -f $path && $path =~ /\.(md|mkdn)$/ ) {
           my $text = file($path)->slurp;
           my $html = markdown( decode_utf8($text) );
           $c->render( inline => $html );
