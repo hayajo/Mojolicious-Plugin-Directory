@@ -11,7 +11,7 @@ use Mojo::Base qw{ Mojolicious::Plugin };
 # Stolen from Plack::App::Direcotry
 my $dir_page = <<'PAGE';
 <html><head>
-  <title>Index of <%= $cur_url %></title>
+  <title>Index of <%= $cur_path %></title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <style type='text/css'>
 table { width:100%%; }
@@ -21,7 +21,7 @@ table { width:100%%; }
 .mtime { width:15em; }
   </style>
 </head><body>
-<h1>Index of <%= $cur_url %></h1>
+<h1>Index of <%= $cur_path %></h1>
 <hr />
 <table>
   <tr>
@@ -38,7 +38,7 @@ table { width:100%%; }
 </body></html>
 PAGE
 
-my $types   = Mojolicious::Types->new;
+my $types = Mojolicious::Types->new;
 
 sub register {
     my $self = shift;
@@ -53,7 +53,7 @@ sub register {
             my $c = shift;
             return render_file( $c, $root )
                 if ( -f $root->to_string() );
-            given ( my $path = $root->rel_dir( Mojo::Util::url_unescape($c->req->url) ) ) {
+            given ( my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) ) ) {
                 when (-f) {
                     $handler->( $c, $path )
                         if ( $handler && ref $handler eq 'CODE' );
@@ -89,10 +89,10 @@ sub render_indexes {
         push @children, Encode::decode_utf8($ent);
     }
 
-    my $cur_url = Encode::decode_utf8( Mojo::Util::url_unescape( $c->req->url ) );
+    my $cur_path = Encode::decode_utf8( Mojo::Util::url_unescape( $c->req->url->path ) );
     for my $basename ( sort { $a cmp $b } @children ) {
         my $file = "$dir/$basename";
-        my $url  = Mojo::Path->new($cur_url)->trailing_slash(0);
+        my $url  = Mojo::Path->new($cur_path)->trailing_slash(0);
         push @{ $url->parts }, $basename;
 
         my $is_dir = -d $file;
@@ -117,7 +117,7 @@ sub render_indexes {
         };
     }
 
-    $c->render( inline => $dir_page, files => \@files, cur_url => $cur_url );
+    $c->render( inline => $dir_page, files => \@files, cur_path => $cur_path );
 }
 
 sub get_ext {
