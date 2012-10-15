@@ -158,7 +158,7 @@ L<Mojolicious::Plugin::Directory> is a static file server directory index a la A
 
 =head1 METHODS
 
-L<Mojolicious::Plugin::Process> inherits all methods from L<Mojolicios::Plugin>.
+L<Mojolicious::Plugin::Directory> inherits all methods from L<Mojolicios::Plugin>.
 
 =head1 OPTIONS
 
