@@ -7,6 +7,7 @@ use Cwd ();
 use Encode ();
 use DirHandle;
 use Mojo::Base qw{ Mojolicious::Plugin };
+use Mojolicious::Types;
 
 # Stolen from Plack::App::Direcotry
 my $dir_page = <<'PAGE';
