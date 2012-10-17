@@ -1,5 +1,8 @@
 Revision history for Perl extension Mojolicious::Plugin::Directory
 
+0.05
+        - modified the order of handler execution
+
 0.04
         - fixed to get request path with Mojo::URL->path
         - changed to "$cur_path" from "$cur_url" in dir_page tempalte
