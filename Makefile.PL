@@ -1,4 +1,5 @@
 use inc::Module::Install;
+use Module::Install::Repository;
 name 'Mojolicious-Plugin-Directory';
 all_from 'lib/Mojolicious/Plugin/Directory.pm';
 
