@@ -47,6 +47,7 @@ sub register {
 
     my $root    = Mojo::Home->new( $args->{root} || Cwd::getcwd );
     my $handler = $args->{handler};
+    my $index   = $args->{dir_index};
     $dir_page   = $args->{dir_page} if ( $args->{dir_page} );
 
     $app->hook(
@@ -56,12 +57,28 @@ sub register {
             given ( my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) ) ) {
                 $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
                 when (-f) { render_file( $c, $path ) unless ( $c->tx->res->code ) }
-                when (-d) { render_indexes( $c, $path ) unless ( $c->tx->res->code ) }
-                default   {}
+                when (-d) {
+                    if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
+                        return render_file( $c, $file );
+                    }
+                    render_indexes( $c, $path ) unless ( $c->tx->res->code )
+                }
+                default {}
             }
         },
     );
     return $app;
+}
+
+sub locate_index {
+    my $index = shift || return;
+    my $dir   = shift || Cwd::getcwd;
+    my $root  = Mojo::Home->new($dir);
+    $index = ( ref $index eq 'ARRAY' ) ? $index : ["$index"];
+    for (@$index) {
+        my $path = $root->rel_file($_);
+        return $path if ( -e $path );
+    }
 }
 
 sub render_file {
@@ -79,15 +96,10 @@ sub render_indexes {
         ( $c->req->url eq '/' )
         ? ()
         : ( { url => '../', name => 'Parent Directory', size => '', type => '', mtime => '' } );
-    my $dh = DirHandle->new($dir);
-    my @children;
-    while ( defined( my $ent = $dh->read ) ) {
-        next if $ent eq '.' or $ent eq '..';
-        push @children, Encode::decode_utf8($ent);
-    }
+    my $children = list_files($dir);
 
     my $cur_path = Encode::decode_utf8( Mojo::Util::url_unescape( $c->req->url->path ) );
-    for my $basename ( sort { $a cmp $b } @children ) {
+    for my $basename ( sort { $a cmp $b } @$children ) {
         my $file = "$dir/$basename";
         my $url  = Mojo::Path->new($cur_path)->trailing_slash(0);
         push @{ $url->parts }, $basename;
@@ -120,6 +132,17 @@ sub render_indexes {
 sub get_ext {
     $_[0] =~ /\.([0-9a-zA-Z]+)$/ || return;
     return lc $1;
+}
+
+sub list_files {
+    my $dir = shift || return [];
+    my $dh = DirHandle->new($dir);
+    my @children;
+    while ( defined( my $ent = $dh->read ) ) {
+        next if $ent eq '.' or $ent eq '..';
+        push @children, Encode::decode_utf8($ent);
+    }
+    return [ @children ];
 }
 
 1;
@@ -173,6 +196,13 @@ L<Mojolicious::Plugin::Directory> supports the following options.
 Document root directory. Defaults to the current directory.
 
 if root is a file, serve only root file.
+
+=head2 C<dir_index>
+
+  # Mojolicious::Lite
+  plugin Directory => { dir_index => [qw/index.html index.htm/] };
+
+like a Apache's DirectoryIndex directive.
 
 =head2 C<dir_page>
 
