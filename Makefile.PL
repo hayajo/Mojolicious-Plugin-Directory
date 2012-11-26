@@ -9,6 +9,7 @@ readme_pod_from 'lib/Mojolicious/Plugin/Directory.pm';
 requires 'Mojolicious' => 3.02;
 
 tests 't/*.t';
+author_tests 'xt';
 
 test_requires 'Test::More';
 auto_set_repository;
