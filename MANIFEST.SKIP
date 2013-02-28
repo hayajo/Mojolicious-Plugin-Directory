@@ -26,3 +26,4 @@
 ^carton.lock$
 ^.gitignore$
 README.pod
+cpanfile
