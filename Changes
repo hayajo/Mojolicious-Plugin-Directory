@@ -1,4 +1,6 @@
-Revision history for Perl extension Mojolicious::Plugin::Directory
+Revision history for Mojolicious-Plugin-Directory
+
+{{$NEXT}}
 
 0.06
         - added dir_index configuration
