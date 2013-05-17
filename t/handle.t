@@ -8,7 +8,7 @@ use Encode ();
 my $dir = dirname(__FILE__);
 plugin 'Directory', root => $dir, handler => sub {
     my ($c, $path) = @_;
-    $c->render_data( $path, format => 'txt' ) if (-f $path);
+    $c->render( data => $path, format => 'txt' ) if (-f $path);
 };
 
 use Test::More tests => 3;
