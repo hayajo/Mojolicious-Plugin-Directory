@@ -58,7 +58,7 @@
          "web" : "https://github.com/hayajo/Mojolicious-Plugin-Directory"
       }
    },
-   "version" : "0.06",
+   "version" : "0.07",
    "x_contributors" : [
       "hayajo <hayato.imai@gmail.com>"
    ]
