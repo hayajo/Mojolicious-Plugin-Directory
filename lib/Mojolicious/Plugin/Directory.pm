@@ -54,16 +54,16 @@ sub register {
         before_dispatch => sub {
             my $c = shift;
             return render_file( $c, $root ) if ( -f $root->to_string() );
-            given ( my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) ) ) {
-                $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
-                when (-f) { render_file( $c, $path ) unless ( $c->tx->res->code ) }
-                when (-d) {
-                    if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
-                        return render_file( $c, $file );
-                    }
-                    render_indexes( $c, $path ) unless ( $c->tx->res->code )
+            my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) );
+            $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
+            if ( -f $path ) {
+                render_file( $c, $path ) unless ( $c->tx->res->code );
+            }
+            elsif ( -d $path ) {
+                if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
+                    return render_file( $c, $file );
                 }
-                default {}
+                render_indexes( $c, $path ) unless ( $c->tx->res->code );
             }
         },
     );
