@@ -99,7 +99,8 @@ if not rendered in CODEREF, serve as static file.
 
 enable json response.
 
-    > curl http://localhost/directory?format=json
+    # http://localhost/directory?format=json
+    plugin Directory => { enable_json => 1 };
 
 # AUTHOR
 
