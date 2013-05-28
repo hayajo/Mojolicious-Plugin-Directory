@@ -60,6 +60,20 @@ like a Apache's DirectoryIndex directive.
 
 a HTML template of index page
 
+## `dir_template`
+
+    # Mojolicious::Lite
+    plugin Directory => { dir_template => $template_name };
+
+    # plugin Directory => {
+    #     dir_template => $template_name,
+    #     render_opts => { format => 'html', handler => 'ep' },
+    # };
+
+a template of index page.
+
+This option takes precedence over the `dir_page`.
+
 ## `handler`
 
     # Mojolicious::Lite
@@ -80,6 +94,12 @@ a HTML template of index page
 CODEREF for handle a request file.
 
 if not rendered in CODEREF, serve as static file.
+
+# JSON
+
+you can also be obtained json string.
+
+    > curl http://localhost/directory?format=json
 
 # AUTHOR
 

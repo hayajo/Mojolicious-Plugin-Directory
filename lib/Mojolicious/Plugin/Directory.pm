@@ -48,7 +48,14 @@ sub register {
     my $root    = Mojo::Home->new( $args->{root} || Cwd::getcwd );
     my $handler = $args->{handler};
     my $index   = $args->{dir_index};
-    $dir_page   = $args->{dir_page} if ( $args->{dir_page} );
+
+    my $render_opts = $args->{render_opts} || {};
+    if ( my $template = $args->{dir_template} ) {
+        $render_opts->{template} = $template;
+    }
+    else {
+        $render_opts->{inline} = $args->{dir_page} || $dir_page;
+    }
 
     $app->hook(
         before_dispatch => sub {
@@ -63,7 +70,7 @@ sub register {
                 if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
                     return render_file( $c, $file );
                 }
-                render_indexes( $c, $path ) unless ( $c->tx->res->code );
+                render_indexes( $c, $path, $render_opts ) unless ( $c->tx->res->code );
             }
         },
     );
@@ -89,8 +96,9 @@ sub render_file {
 }
 
 sub render_indexes {
-    my $c   = shift;
-    my $dir = shift;
+    my $c    = shift;
+    my $dir  = shift;
+    my $opts = shift;
 
     my @files =
         ( $c->req->url eq '/' )
@@ -126,7 +134,13 @@ sub render_indexes {
         };
     }
 
-    $c->render( inline => $dir_page, files => \@files, cur_path => $cur_path );
+    $c->stash( files    => \@files );
+    $c->stash( cur_path => $cur_path );
+
+    $c->respond_to(
+        json => { json => { files => \@files, cur_path => $cur_path } },
+        any  => $opts,
+    );
 }
 
 sub get_ext {
@@ -211,6 +225,20 @@ like a Apache's DirectoryIndex directive.
 
 a HTML template of index page
 
+=head2 C<dir_template>
+
+  # Mojolicious::Lite
+  plugin Directory => { dir_template => $template_name };
+
+  # plugin Directory => {
+  #     dir_template => $template_name,
+  #     render_opts => { format => 'html', handler => 'ep' },
+  # };
+
+a template of index page.
+
+This option takes precedence over the C<dir_page>.
+
 =head2 C<handler>
 
   # Mojolicious::Lite
@@ -231,6 +259,12 @@ a HTML template of index page
 CODEREF for handle a request file.
 
 if not rendered in CODEREF, serve as static file.
+
+=head1 JSON
+
+you can also be obtained json string.
+
+    > curl http://localhost/directory?format=json
 
 =head1 AUTHOR
 
