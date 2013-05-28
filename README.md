@@ -95,9 +95,9 @@ CODEREF for handle a request file.
 
 if not rendered in CODEREF, serve as static file.
 
-# JSON
+## `enable_json`
 
-you can also be obtained json string.
+enable json response.
 
     > curl http://localhost/directory?format=json
 

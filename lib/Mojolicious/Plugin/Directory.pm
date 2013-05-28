@@ -57,6 +57,8 @@ sub register {
         $render_opts->{inline} = $args->{dir_page} || $dir_page;
     }
 
+    my $enable_json = $args->{enable_json};
+
     $app->hook(
         before_dispatch => sub {
             my $c = shift;
@@ -70,7 +72,7 @@ sub register {
                 if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
                     return render_file( $c, $file );
                 }
-                render_indexes( $c, $path, $render_opts ) unless ( $c->tx->res->code );
+                render_indexes( $c, $path, $render_opts, $enable_json ) unless ( $c->tx->res->code );
             }
         },
     );
@@ -96,9 +98,10 @@ sub render_file {
 }
 
 sub render_indexes {
-    my $c    = shift;
-    my $dir  = shift;
-    my $opts = shift;
+    my $c           = shift;
+    my $dir         = shift;
+    my $opts        = shift;
+    my $enable_json = shift;
 
     my @files =
         ( $c->req->url eq '/' )
@@ -137,10 +140,11 @@ sub render_indexes {
     $c->stash( files    => \@files );
     $c->stash( cur_path => $cur_path );
 
-    $c->respond_to(
-        json => { json => { files => \@files, cur_path => $cur_path } },
-        any  => $opts,
-    );
+    my %respond = ( any  => $opts );
+    $respond{json} = { json => { files => \@files, cur_path => $cur_path } }
+        if ($enable_json);
+
+    $c->respond_to(%respond);
 }
 
 sub get_ext {
@@ -260,9 +264,9 @@ CODEREF for handle a request file.
 
 if not rendered in CODEREF, serve as static file.
 
-=head1 JSON
+=head2 C<enable_json>
 
-you can also be obtained json string.
+enable json response.
 
     > curl http://localhost/directory?format=json
 

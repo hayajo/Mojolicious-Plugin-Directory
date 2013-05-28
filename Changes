@@ -1,8 +1,7 @@
 Revision history for Mojolicious-Plugin-Directory
 
 {{$NEXT}}
-        - added an option 'dir_template'
-        - supported content negotiation (only 'json')
+        - added options 'dir_template' and 'enable_json'
         - fixed to stop using geven-when syntax
 
 0.07  2013-05-17 11:50:14 JST
