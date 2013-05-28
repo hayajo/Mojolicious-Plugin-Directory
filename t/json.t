@@ -20,5 +20,5 @@ subtest 'entries' => sub {
         next if -d $ent or $ent eq '.' or $ent eq '..';
         $entries++;
     }
-    $t->get_ok('/?format=json')->status_is(200)->json_has('/cur_path')->json_has('/files');
+    $t->get_ok('/?format=json')->status_is(200)->json_has('/current')->json_has('/files');
 }

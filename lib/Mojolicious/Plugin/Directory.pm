@@ -12,7 +12,7 @@ use Mojolicious::Types;
 # Stolen from Plack::App::Direcotry
 my $dir_page = <<'PAGE';
 <html><head>
-  <title>Index of <%= $cur_path %></title>
+  <title>Index of <%= $current %></title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <style type='text/css'>
 table { width:100%%; }
@@ -22,7 +22,7 @@ table { width:100%%; }
 .mtime { width:15em; }
   </style>
 </head><body>
-<h1>Index of <%= $cur_path %></h1>
+<h1>Index of <%= $current %></h1>
 <hr />
 <table>
   <tr>
@@ -42,12 +42,12 @@ PAGE
 my $types = Mojolicious::Types->new;
 
 sub register {
-    my $self = shift;
-    my ( $app, $args ) = @_;
+    my ( $self, $app, $args ) = @_;
 
-    my $root    = Mojo::Home->new( $args->{root} || Cwd::getcwd );
-    my $handler = $args->{handler};
-    my $index   = $args->{dir_index};
+    my $root        = Mojo::Home->new( $args->{root} || Cwd::getcwd );
+    my $handler     = $args->{handler};
+    my $index       = $args->{dir_index};
+    my $enable_json = $args->{enable_json};
 
     my $render_opts = $args->{render_opts} || {};
     if ( my $template = $args->{dir_template} ) {
@@ -57,14 +57,15 @@ sub register {
         $render_opts->{inline} = $args->{dir_page} || $dir_page;
     }
 
-    my $enable_json = $args->{enable_json};
-
     $app->hook(
         before_dispatch => sub {
             my $c = shift;
+
             return render_file( $c, $root ) if ( -f $root->to_string() );
+
             my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) );
             $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
+
             if ( -f $path ) {
                 render_file( $c, $path ) unless ( $c->tx->res->code );
             }
@@ -72,7 +73,9 @@ sub register {
                 if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
                     return render_file( $c, $file );
                 }
-                render_indexes( $c, $path, $render_opts, $enable_json ) unless ( $c->tx->res->code );
+
+                render_indexes( $c, $path, $render_opts, $enable_json )
+                    unless ( $c->tx->res->code );
             }
         },
     );
@@ -82,7 +85,9 @@ sub register {
 sub locate_index {
     my $index = shift || return;
     my $dir   = shift || Cwd::getcwd;
+
     my $root  = Mojo::Home->new($dir);
+
     $index = ( ref $index eq 'ARRAY' ) ? $index : ["$index"];
     for (@$index) {
         my $path = $root->rel_file($_);
@@ -91,28 +96,51 @@ sub locate_index {
 }
 
 sub render_file {
-    my $c    = shift;
-    my $file = shift;
+    my ( $c, $file ) = @_;
+
     my $data = Mojo::Util::slurp($file);
     $c->render( data => $data, format => get_ext($file) || 'txt' );
 }
 
 sub render_indexes {
-    my $c           = shift;
-    my $dir         = shift;
-    my $opts        = shift;
-    my $enable_json = shift;
+    my ( $c, $dir, $render_opts, $enable_json ) = @_;
 
     my @files =
         ( $c->req->url eq '/' )
         ? ()
         : ( { url => '../', name => 'Parent Directory', size => '', type => '', mtime => '' } );
-    my $children = list_files($dir);
 
-    my $cur_path = Encode::decode_utf8( Mojo::Util::url_unescape( $c->req->url->path ) );
-    for my $basename ( sort { $a cmp $b } @$children ) {
+    my ( $current, $list ) = list_files( $c, $dir );
+    push @files, @$list;
+
+    $c->stash( files   => \@files );
+    $c->stash( current => $current );
+
+    my %respond = ( any => $render_opts );
+    $respond{json} = { json => { files => \@files, current => $current } }
+        if ($enable_json);
+
+    $c->respond_to(%respond);
+}
+
+sub list_files {
+    my ( $c, $dir ) = @_;
+
+    my $current = Encode::decode_utf8( Mojo::Util::url_unescape( $c->req->url->path ) );
+
+    return ( $current, [] ) unless $dir;
+
+    my $dh = DirHandle->new($dir);
+    my @children;
+    while ( defined( my $ent = $dh->read ) ) {
+        next if $ent eq '.' or $ent eq '..';
+        push @children, Encode::decode_utf8($ent);
+    }
+
+    my @files;
+    for my $basename ( sort { $a cmp $b } @children ) {
         my $file = "$dir/$basename";
-        my $url  = Mojo::Path->new($cur_path)->trailing_slash(0);
+        my $url  = Mojo::Path->new($current)->trailing_slash(0);
         push @{ $url->parts }, $basename;
 
         my $is_dir = -d $file;
@@ -137,30 +165,12 @@ sub render_indexes {
         };
     }
 
-    $c->stash( files    => \@files );
-    $c->stash( cur_path => $cur_path );
-
-    my %respond = ( any  => $opts );
-    $respond{json} = { json => { files => \@files, cur_path => $cur_path } }
-        if ($enable_json);
-
-    $c->respond_to(%respond);
+    return ( $current, \@files );
 }
 
 sub get_ext {
     $_[0] =~ /\.([0-9a-zA-Z]+)$/ || return;
     return lc $1;
-}
-
-sub list_files {
-    my $dir = shift || return [];
-    my $dh = DirHandle->new($dir);
-    my @children;
-    while ( defined( my $ent = $dh->read ) ) {
-        next if $ent eq '.' or $ent eq '..';
-        push @children, Encode::decode_utf8($ent);
-    }
-    return [ @children ];
 }
 
 1;
