@@ -23,14 +23,13 @@ subtest 'entries' => sub {
     while ( defined( my $ent = $dh->read ) ) {
         $ent = Encode::decode_utf8($ent);
         next if $ent eq '.' or $ent eq '..';
-        given ( my $path = File::Spec->catdir( $dir, $ent ) ) {
-            when (-f) {
-                $t->get_ok("/$ent")->status_is(200)->content_is( Encode::encode_utf8($path) );
-            }
-            when (-d) {
-                $t->get_ok("/$ent")->status_is(200)->content_like( qr/Parent Directory/ );
-            }
-            default { ok 0 }
+        my $path = File::Spec->catdir( $dir, $ent );
+        if (-f $path) {
+            $t->get_ok("/$ent")->status_is(200)->content_is( Encode::encode_utf8($path) );
         }
+        elsif (-d $path) {
+            $t->get_ok("/$ent")->status_is(200)->content_like( qr/Parent Directory/ );
+        }
+        else { ok 0 }
     }
 }
