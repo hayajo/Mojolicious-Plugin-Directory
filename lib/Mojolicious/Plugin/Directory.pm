@@ -151,7 +151,7 @@ sub list_files {
         }
 
         my $mime_type =
-            $is_dir
+            ($is_dir)
             ? 'directory'
             : ( $types->type( get_ext($file) || 'txt' ) || 'text/plain' );
         my $mtime = Mojo::Date->new( $stat[9] )->to_string();
@@ -183,26 +183,13 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 =head1 SYNOPSIS
 
-  # simple usage
   use Mojolicious::Lite;
-  plugin( 'Directory', root => "/path/to/htdocs" )->start;
+  plugin 'Directory';
+  app->start;
 
-  # with handler
-  use Text::Markdown qw{ markdown };
-  use Path::Class;
-  use Encode qw{ decode_utf8 };
-  plugin('Directory', root => "/path/to/htdocs", handler => sub {
-      my ($c, $path) = @_;
-      if ( -f $path && $path =~ /\.(md|mkdn)$/ ) {
-          my $text = file($path)->slurp;
-          my $html = markdown( decode_utf8($text) );
-          $c->render( inline => $html );
-      }
-  })->start;
+or
 
-  or
-
-  > perl -Mojo -E 'a->plugin("Directory", root => "/path/to/htdocs")->start' daemon
+  > perl -Mojo -E 'a->plugin("Directory")->start' daemon
 
 =head1 DESCRIPTION
 
@@ -218,7 +205,6 @@ L<Mojolicious::Plugin::Directory> supports the following options.
 
 =head2 C<root>
 
-  # Mojolicious::Lite
   plugin Directory => { root => "/path/to/htdocs" };
 
 Document root directory. Defaults to the current directory.
@@ -227,38 +213,91 @@ if root is a file, serve only root file.
 
 =head2 C<dir_index>
 
-  # Mojolicious::Lite
   plugin Directory => { dir_index => [qw/index.html index.htm/] };
 
 like a Apache's DirectoryIndex directive.
 
 =head2 C<dir_page>
 
-  # Mojolicious::Lite
+  my $template_str = <<EOT
+  <!DOCTYPE html>
+  <html lang="ja">
+  ...
+  </html>
+  EOT
+
   plugin Directory => { dir_page => $template_str };
 
-a HTML template of index page
+a HTML template of index page.
+
+"$files" and "$current" are passed in stash.
+
+=over 2
+
+=item $files: Array[Hash]
+
+list of files and directories
+
+=item $current: String
+
+current path
+
+=back
 
 =head2 C<dir_template>
 
-  # Mojolicious::Lite
-  plugin Directory => { dir_template => $template_name };
+  plugin Directory => { dir_template => 'index' };
 
-  # plugin Directory => {
-  #     dir_template => $template_name,
-  #     render_opts => { format => 'html', handler => 'ep' },
-  # };
+  # with 'render_opts' option
+  plugin Directory => {
+      dir_template => 'index',
+      render_opts  => { format => 'html', handler => 'ep' },
+  };
 
-a template of index page.
+  ...
 
-This option takes precedence over the C<dir_page>.
+  __DATA__
+
+  @@ index.html.ep
+  % layout 'default';
+  % title 'DirectoryIndex';
+  <h1>Index of <%= $current %></h1>
+  <ul>
+  % for my $file (@$files) {
+  <li><a href='<%= $file->{url} %>'><%== $file->{name} %></a></li>
+  % }
+
+  @@ layouts/default.html.ep
+  <!DOCTYPE html>
+  <html>
+    <head><title><%= title %></title></head>
+    <body><%= content %></body>
+  </html>
+
+a template name of index page.
+
+this option takes precedence over the C<dir_page>.
+
+"$files" and "$current" are passed in stash.
+
+=over 2
+
+=item $files: Array[Hash]
+
+list of files and directories
+
+=item $current: String
+
+current path
+
+=back
 
 =head2 C<handler>
 
-  # Mojolicious::Lite
   use Text::Markdown qw{ markdown };
   use Path::Class;
   use Encode qw{ decode_utf8 };
+
   plugin Directory => {
       handler => sub {
           my ($c, $path) = @_;
@@ -276,10 +315,10 @@ if not rendered in CODEREF, serve as static file.
 
 =head2 C<enable_json>
 
-enable json response.
-
-  # http://localhost/directory?format=json
+  # http://host/directory?format=json
   plugin Directory => { enable_json => 1 };
+
+enable json response.
 
 =head1 AUTHOR
 
