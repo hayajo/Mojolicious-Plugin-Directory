@@ -48,6 +48,7 @@ sub register {
     my $root    = Mojo::Home->new( $args->{root} || Cwd::getcwd );
     my $handler = $args->{handler};
     my $index   = $args->{dir_index};
+    my $auto_index = $args->{auto_index} // 1;
     $dir_page   = $args->{dir_page} if ( $args->{dir_page} );
 
     $app->hook(
@@ -63,7 +64,7 @@ sub register {
                 if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
                     return render_file( $c, $file );
                 }
-                render_indexes( $c, $path ) unless ( $c->tx->res->code );
+                render_indexes( $c, $path ) unless not $auto_index or ( $c->tx->res->code );
             }
         },
     );
@@ -196,6 +197,13 @@ L<Mojolicious::Plugin::Directory> supports the following options.
 Document root directory. Defaults to the current directory.
 
 if root is a file, serve only root file.
+
+=head2 C<auto_index>
+
+   # Mojolicious::Lite
+   plugin Directory => { auto_index => 0 };
+
+Automatically generate index page for directory, default true.
 
 =head2 C<dir_index>
 
