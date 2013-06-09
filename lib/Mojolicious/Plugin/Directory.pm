@@ -244,6 +244,16 @@ if not rendered in CODEREF, serve as static file.
 
 hayajo E<lt>hayajo@cpan.orgE<gt>
 
+=head1 CONTRIBUTORS
+
+Many thanks to the contributors for their work.
+
+=over 4
+
+=item ChinaXing
+
+=back
+
 =head1 SEE ALSO
 
 L<Plack::App::Directory>

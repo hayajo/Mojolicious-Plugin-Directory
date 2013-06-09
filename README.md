@@ -46,6 +46,13 @@ Document root directory. Defaults to the current directory.
 
 if root is a file, serve only root file.
 
+## `auto_index`
+
+    # Mojolicious::Lite
+    plugin Directory => { auto_index => 0 };
+
+Automatically generate index page for directory, default true.
+
 ## `dir_index`
 
     # Mojolicious::Lite
@@ -84,6 +91,12 @@ if not rendered in CODEREF, serve as static file.
 # AUTHOR
 
 hayajo <hayajo@cpan.org>
+
+# CONTRIBUTORS
+
+Many thanks to the contributors for their work.
+
+- ChinaXing
 
 # SEE ALSO
 
