@@ -1,6 +1,7 @@
 Revision history for Mojolicious-Plugin-Directory
 
 {{$NEXT}}
+        - added auto_index configuration. thanks ChinaXing@github
 
 0.07  2013-05-17 11:50:14 JST
         - changed to Mojolicious::Controller#render from Mojolicious::Controller#render_data
