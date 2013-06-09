@@ -95,8 +95,6 @@ If not rendered in CODEREF, serve as static file.
     # /dir?format=json
     plugin Directory => { json => 1 };
 
-
-
 Enable json response.
 
 # AUTHOR
