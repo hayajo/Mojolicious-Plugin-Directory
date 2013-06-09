@@ -4,7 +4,7 @@
       "hayajo <hayajo@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.021"
+            "Module::Build::Tiny" : "0.023"
          }
       },
       "develop" : {
@@ -58,9 +58,11 @@
          "web" : "https://github.com/hayajo/Mojolicious-Plugin-Directory"
       }
    },
-   "version" : "0.07",
+   "version" : "0.08",
    "x_contributors" : [
-      "hayajo <hayato.imai@gmail.com>"
+      "ChinaXing(\u9648\u4e91\u661f) <chen.yack@gmail.com>",
+      "hayajo <hayato.imai@gmail.com>",
+      "hayato imai <hayato.imai@gmail.com>"
    ]
 }
 
