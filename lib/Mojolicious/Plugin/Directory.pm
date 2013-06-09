@@ -49,6 +49,7 @@ sub register {
     my $handler    = $args->{handler};
     my $index      = $args->{dir_index};
     my $auto_index = $args->{auto_index} // 1;
+    my $json       = $args->{json};
     $dir_page = $args->{dir_page} if ( $args->{dir_page} );
 
     $app->hook(
@@ -64,7 +65,7 @@ sub register {
                     return render_file( $c, $index_path, $handler );
                 }
 
-                render_indexes( $c, $path ) unless not $auto_index;
+                render_indexes( $c, $path, $json ) unless not $auto_index;
             }
         },
     );
@@ -93,11 +94,12 @@ sub render_file {
 }
 
 sub render_indexes {
-    my $c   = shift;
-    my $dir = shift;
+    my $c    = shift;
+    my $dir  = shift;
+    my $json = shift;
 
     my @files =
-        ( $c->req->url eq '/' )
+        ( $c->req->url->path eq '/' )
         ? ()
         : ( { url => '../', name => 'Parent Directory', size => '', type => '', mtime => '' } );
     my $children = list_files($dir);
@@ -130,7 +132,16 @@ sub render_indexes {
         };
     }
 
-    $c->render( inline => $dir_page, files => \@files, cur_path => $cur_path );
+    my $any = { inline => $dir_page, files => \@files, cur_path => $cur_path };
+    if ($json) {
+        $c->respond_to(
+            json => { json => Mojo::JSON->new->encode(\@files) },
+            any  => $any,
+        );
+    }
+    else {
+        $c->render( %$any );
+    }
 }
 
 sub get_ext {
@@ -199,7 +210,7 @@ L<Mojolicious::Plugin::Directory> supports the following options.
 
 Document root directory. Defaults to the current directory.
 
-if root is a file, serve only root file.
+If root is a file, serve only root file.
 
 =head2 C<auto_index>
 
@@ -213,7 +224,7 @@ Automatically generate index page for directory, default true.
   # Mojolicious::Lite
   plugin Directory => { dir_index => [qw/index.html index.htm/] };
 
-like a Apache's DirectoryIndex directive.
+Like a Apache's DirectoryIndex directive.
 
 =head2 C<dir_page>
 
@@ -241,7 +252,17 @@ a HTML template of index page
 
 CODEREF for handle a request file.
 
-if not rendered in CODEREF, serve as static file.
+If not rendered in CODEREF, serve as static file.
+
+=head2 C<json>
+
+  # Mojolicious::Lite
+  # /dir (Accept: application/json)
+  # /dir?format=json
+  plugin Directory => { json => 1 };
+
+
+Enable json response.
 
 =head1 AUTHOR
 

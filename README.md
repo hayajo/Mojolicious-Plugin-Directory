@@ -44,7 +44,7 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 Document root directory. Defaults to the current directory.
 
-if root is a file, serve only root file.
+If root is a file, serve only root file.
 
 ## `auto_index`
 
@@ -58,7 +58,7 @@ Automatically generate index page for directory, default true.
     # Mojolicious::Lite
     plugin Directory => { dir_index => [qw/index.html index.htm/] };
 
-like a Apache's DirectoryIndex directive.
+Like a Apache's DirectoryIndex directive.
 
 ## `dir_page`
 
@@ -86,7 +86,18 @@ a HTML template of index page
 
 CODEREF for handle a request file.
 
-if not rendered in CODEREF, serve as static file.
+If not rendered in CODEREF, serve as static file.
+
+## `json`
+
+    # Mojolicious::Lite
+    # /dir (Accept: application/json)
+    # /dir?format=json
+    plugin Directory => { json => 1 };
+
+
+
+Enable json response.
 
 # AUTHOR
 
