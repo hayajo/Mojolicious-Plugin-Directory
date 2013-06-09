@@ -45,26 +45,26 @@ sub register {
     my $self = shift;
     my ( $app, $args ) = @_;
 
-    my $root    = Mojo::Home->new( $args->{root} || Cwd::getcwd );
-    my $handler = $args->{handler};
-    my $index   = $args->{dir_index};
+    my $root       = Mojo::Home->new( $args->{root} || Cwd::getcwd );
+    my $handler    = $args->{handler};
+    my $index      = $args->{dir_index};
     my $auto_index = $args->{auto_index} // 1;
-    $dir_page   = $args->{dir_page} if ( $args->{dir_page} );
+    $dir_page = $args->{dir_page} if ( $args->{dir_page} );
 
     $app->hook(
         before_dispatch => sub {
             my $c = shift;
-            return render_file( $c, $root ) if ( -f $root->to_string() );
+            return render_file( $c, $root, $handler ) if ( -f $root->to_string() );
             my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) );
-            $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
             if ( -f $path ) {
-                render_file( $c, $path ) unless ( $c->tx->res->code );
+                render_file( $c, $path, $handler );
             }
             elsif ( -d $path ) {
-                if ( $index && ( my $file = locate_index( $index, $path ) ) ) {
-                    return render_file( $c, $file );
+                if ( $index && ( my $index_path = locate_index( $index, $path ) ) ) {
+                    return render_file( $c, $index_path, $handler );
                 }
-                render_indexes( $c, $path ) unless not $auto_index or ( $c->tx->res->code );
+
+                render_indexes( $c, $path ) unless not $auto_index;
             }
         },
     );
@@ -83,10 +83,13 @@ sub locate_index {
 }
 
 sub render_file {
-    my $c    = shift;
-    my $file = shift;
-    my $data = Mojo::Util::slurp($file);
-    $c->render( data => $data, format => get_ext($file) || 'txt' );
+    my $c       = shift;
+    my $path    = shift;
+    my $handler = shift;
+    $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
+    return if ( $c->tx->res->code );
+    my $data = Mojo::Util::slurp($path);
+    $c->render( data => $data, format => get_ext($path) || 'txt' );
 }
 
 sub render_indexes {
