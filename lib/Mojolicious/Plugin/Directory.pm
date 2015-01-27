@@ -8,6 +8,7 @@ use Encode ();
 use DirHandle;
 use Mojo::Base qw{ Mojolicious::Plugin };
 use Mojolicious::Types;
+use Mojo::JSON qw(encode_json);
 
 # Stolen from Plack::App::Direcotry
 my $dir_page = <<'PAGE';
@@ -135,7 +136,7 @@ sub render_indexes {
     my $any = { inline => $dir_page, files => \@files, cur_path => $cur_path };
     if ($json) {
         $c->respond_to(
-            json => { json => Mojo::JSON->new->encode(\@files) },
+            json => { json => encode_json(\@files) },
             any  => $any,
         );
     }
