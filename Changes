@@ -1,6 +1,8 @@
 Revision history for Mojolicious-Plugin-Directory
 
 {{$NEXT}}
+
+0.09 2015-01-29T02:20:25Z
         - fixed to use Mojo::JSON with functional interface. thanks reneeb@github
         - minillaize
 
