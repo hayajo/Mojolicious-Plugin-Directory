@@ -27,15 +27,15 @@ Mojolicious::Plugin::Directory - Serve static files from document root with dire
 
 # DESCRIPTION
 
-[Mojolicious::Plugin::Directory](http://search.cpan.org/perldoc?Mojolicious::Plugin::Directory) is a static file server directory index a la Apache's mod\_autoindex.
+[Mojolicious::Plugin::Directory](https://metacpan.org/pod/Mojolicious::Plugin::Directory) is a static file server directory index a la Apache's mod\_autoindex.
 
 # METHODS
 
-[Mojolicious::Plugin::Directory](http://search.cpan.org/perldoc?Mojolicious::Plugin::Directory) inherits all methods from [Mojolicious::Plugin](http://search.cpan.org/perldoc?Mojolicious::Plugin).
+[Mojolicious::Plugin::Directory](https://metacpan.org/pod/Mojolicious::Plugin::Directory) inherits all methods from [Mojolicious::Plugin](https://metacpan.org/pod/Mojolicious::Plugin).
 
 # OPTIONS
 
-[Mojolicious::Plugin::Directory](http://search.cpan.org/perldoc?Mojolicious::Plugin::Directory) supports the following options.
+[Mojolicious::Plugin::Directory](https://metacpan.org/pod/Mojolicious::Plugin::Directory) supports the following options.
 
 ## `root`
 
@@ -109,7 +109,7 @@ Many thanks to the contributors for their work.
 
 # SEE ALSO
 
-[Plack::App::Directory](http://search.cpan.org/perldoc?Plack::App::Directory)
+[Plack::App::Directory](https://metacpan.org/pod/Plack::App::Directory)
 
 # LICENSE
 

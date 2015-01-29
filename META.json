@@ -4,7 +4,7 @@
       "hayajo <hayajo@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.2, Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.131560",
+   "generated_by" : "Minilla/v2.3.0, CPAN::Meta::Converter version 2.143240",
    "license" : [
       "perl_5"
    ],
@@ -20,18 +20,24 @@
          "inc",
          "share",
          "eg",
-         "examples"
+         "examples",
+         "author",
+         "builder"
       ]
    },
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.023"
+            "Module::Build" : "0.38"
          }
       },
       "develop" : {
          "requires" : {
-            "Test::Pod" : "1.41"
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion::Fast" : "0.04",
+            "Test::PAUSE::Permissions" : "0.04",
+            "Test::Pod" : "1.41",
+            "Test::Spellunker" : "v0.2.7"
          }
       },
       "runtime" : {
@@ -46,7 +52,7 @@
          }
       }
    },
-   "release_status" : "stable",
+   "release_status" : "unstable",
    "resources" : {
       "bugtracker" : {
          "web" : "https://github.com/hayajo/Mojolicious-Plugin-Directory/issues"
@@ -54,15 +60,14 @@
       "homepage" : "https://github.com/hayajo/Mojolicious-Plugin-Directory",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/hayajo/Mojolicious-Plugin-Directory.git",
+         "url" : "git://github.com/hayajo/Mojolicious-Plugin-Directory.git",
          "web" : "https://github.com/hayajo/Mojolicious-Plugin-Directory"
       }
    },
    "version" : "0.08",
    "x_contributors" : [
-      "ChinaXing(\u9648\u4e91\u661f) <chen.yack@gmail.com>",
-      "hayajo <hayato.imai@gmail.com>",
-      "hayato imai <hayato.imai@gmail.com>"
+      "ChinaXing(陈云星) <chen.yack@gmail.com>",
+      "Renee <reb@perl-services.de>",
+      "Hayato Imai <hayato.imai@gmail.com>"
    ]
 }
-

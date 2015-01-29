@@ -1,6 +1,8 @@
 Revision history for Mojolicious-Plugin-Directory
 
 {{$NEXT}}
+        - fixed to use Mojo::JSON with functional interface. thanks reneeb@github
+        - minillaize
 
 0.08  2013-06-09 16:34:06 JST
         - added auto_index configuration. thanks ChinaXing@github
