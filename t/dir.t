@@ -26,5 +26,5 @@ subtest 'entries' => sub {
 subtest 'json' => sub {
     $t->get_ok('/?format=json')
       ->status_is(200)
-      ->content_type_is('application/json');
+      ->content_type_is('application/json;charset=UTF-8');
 };
