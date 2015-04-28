@@ -2,6 +2,9 @@ Revision history for Mojolicious-Plugin-Directory
 
 {{$NEXT}}
 
+0.11 2015-04-28T03:13:29Z
+        - fixed a bug in the test.
+
 0.10 2015-04-27T13:56:32Z
         - fixed the test because  Mojolicious::Types came get the json MIME type with charset.
 
