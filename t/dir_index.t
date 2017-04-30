@@ -8,7 +8,7 @@ use Encode ();
 my $dir = dirname(__FILE__);
 plugin
     'Directory',
-    root      => Mojo::Home->new($dir)->rel_dir('dir'),
+    root      => Mojo::Home->new($dir)->rel_file('dir'),
     dir_index => [qw/index.html index.htm/];
 
 use Test::More tests => 3;

@@ -42,7 +42,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Mojolicious" : "4.82",
+            "Mojolicious" : "7.15",
             "perl" : "5.010001"
          }
       },
@@ -64,12 +64,13 @@
          "web" : "https://github.com/hayajo/Mojolicious-Plugin-Directory"
       }
    },
-   "version" : "0.13",
+   "version" : "0.14",
    "x_contributors" : [
       "ChinaXing(陈云星) <chen.yack@gmail.com>",
       "Renee <reb@perl-services.de>",
       "今井隼人 <imai.h@imaihayato-no-MacBook-Pro.local>",
-      "hayajo <hayato.imai@gmail.com>"
+      "hayajo <hayato.imai@gmail.com>",
+      "hayato imai <hayato@MBP2014MID.local>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

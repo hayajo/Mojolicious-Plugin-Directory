@@ -1,7 +1,7 @@
 package Mojolicious::Plugin::Directory;
 use strict;
 use warnings;
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 use Cwd ();
 use Encode ();
@@ -57,7 +57,7 @@ sub register {
         before_dispatch => sub {
             my $c = shift;
             return render_file( $c, $root, $handler ) if ( -f $root->to_string() );
-            my $path = $root->rel_dir( Mojo::Util::url_unescape( $c->req->url->path ) );
+            my $path = $root->rel_file( Mojo::Util::url_unescape( $c->req->url->path ) );
             if ( -f $path ) {
                 render_file( $c, $path, $handler );
             }
@@ -95,7 +95,7 @@ sub render_file {
     my $handler = shift;
     $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
     return if ( $c->tx->res->code );
-    my $data = Mojo::Util::slurp($path);
+    my $data = Mojo::File::slurp($path);
     $c->render( data => $data, format => get_ext($path) || 'txt' );
 }
 
