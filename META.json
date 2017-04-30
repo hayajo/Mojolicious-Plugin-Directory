@@ -4,7 +4,7 @@
       "hayajo <hayajo@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.0.2, CPAN::Meta::Converter version 2.150001",
+   "generated_by" : "Minilla/v3.0.10, CPAN::Meta::Converter version 2.150005",
    "license" : [
       "perl_5"
    ],
@@ -64,11 +64,12 @@
          "web" : "https://github.com/hayajo/Mojolicious-Plugin-Directory"
       }
    },
-   "version" : "0.12",
+   "version" : "0.13",
    "x_contributors" : [
       "ChinaXing(陈云星) <chen.yack@gmail.com>",
       "Renee <reb@perl-services.de>",
-      "Hayato Imai <hayato.imai@gmail.com>",
-      "今井隼人 <imai.h@imaihayato-no-MacBook-Pro.local>"
-   ]
+      "今井隼人 <imai.h@imaihayato-no-MacBook-Pro.local>",
+      "hayajo <hayato.imai@gmail.com>"
+   ],
+   "x_serialization_backend" : "JSON::PP version 2.27300"
 }

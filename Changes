@@ -2,6 +2,9 @@ Revision history for Mojolicious-Plugin-Directory
 
 {{$NEXT}}
 
+0.13 2017-04-30T03:54:40Z
+        - fixed issue #5. thanks plicease@github
+
 0.12 2016-07-22T02:21:24Z
         - fixed to pass the test with Mojolicious 7.
 

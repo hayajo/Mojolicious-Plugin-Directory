@@ -1,7 +1,7 @@
 package Mojolicious::Plugin::Directory;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 use Cwd ();
 use Encode ();
@@ -64,6 +64,11 @@ sub register {
             elsif ( -d $path ) {
                 if ( $index && ( my $index_path = locate_index( $index, $path ) ) ) {
                     return render_file( $c, $index_path, $handler );
+                }
+
+                if ( $c->req->url->path ne '/' && ! $c->req->url->path->trailing_slash ) {
+                    $c->redirect_to($c->req->url->path->trailing_slash(1));
+                    return;
                 }
 
                 render_indexes( $c, $path, $json ) unless not $auto_index;
