@@ -95,8 +95,7 @@ sub render_file {
     my $handler = shift;
     $handler->( $c, $path ) if ( ref $handler eq 'CODE' );
     return if ( $c->tx->res->code );
-    my $data = Mojo::File::slurp($path);
-    $c->render( data => $data, format => get_ext($path) || 'txt' );
+    Mojolicious::Static->new->dispatch($c);
 }
 
 sub render_indexes {
