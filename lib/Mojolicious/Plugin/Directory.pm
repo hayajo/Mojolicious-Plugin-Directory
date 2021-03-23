@@ -71,7 +71,11 @@ sub register {
                     return;
                 }
 
-                render_indexes( $c, $path, $json ) unless not $auto_index;
+                if( $auto_index ) {
+                    render_indexes( $c, $path, $json );
+                } else {
+                    $c->reply->not_found;
+                }
             }
         },
     );
